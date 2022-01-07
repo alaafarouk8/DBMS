@@ -9,6 +9,7 @@ do
 		    	ls DataBases
 			;;
 		ConnectToDataBases )
+			./connectDB.sh
 			;;
 		DropDataBase )
                         ./dropDB.sh
