@@ -1,4 +1,21 @@
 #!/bin/bash
+dropTable() {
+	echo -e "-----------------------------------------------"
+	echo    "-----------------Drop Table--------------------"
+	echo -e "-----------------------------------------------"
+	echo Enter The Name of the Table You Wanna Delete
+	read name
+	if [[ -f $name ]] ; then
+        	rm $name
+        	echo $name Deleted Successfully
+	else
+        	echo $name not found
+	fi
+
+}
+
+
+
 echo -e "-----------------------------------------------"
 echo    "---------------Connect To DataBase-------------"
 echo -e "-----------------------------------------------"
@@ -13,13 +30,14 @@ then
  	do
         	case $choice in
                 	CreateTable )
-				createtable.sh
+				touch file
                         	;;
                 	ListTables )
                        		ls
                         	;;
-                	DropTables )
-                        	;;
+                	DropTable )
+			        dropTable
+				;;
                 	InsertTntoTable )
                         	;;
                 	SelectFromTable )
@@ -38,4 +56,5 @@ done
 
 else 
 	echo $name is not found
-fi 	
+fi 
+
