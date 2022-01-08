@@ -41,6 +41,12 @@ else
 		do 
 			echo "Enter Name of the Column $i"
 			read ColName
+			while [[ $ColName == *" "* ]]
+			do
+				echo "Column Name Cant Contain Spaces"
+				echo "Please , Enter Column Name Again"
+				read ColName
+			done
 			echo "Enter DataType of the Column $ColName"
 			read ColDataType
 			while [[ $ColDataType != int && $ColDataType != string ]];
@@ -48,9 +54,14 @@ else
 				echo "Wrong DataType, Please Enter Int Or String"
 				read ColDataType
 			done
-	      		echo $ColName":" >> $tableName 
-	        	echo $ColDataType":"  >> $tableName
- 		done
+			if [[ i -eq NumberCol ]] ; then
+	      			echo -n	$ColName":">> $tableName 
+	        		echo -n $ColDataType>> $tableName
+ 		        else 
+				echo -n $ColName":" >> $tableName
+				echo -n $ColDataType":" >> $tableName
+			fi
+		done
 	fi
 fi
 }
