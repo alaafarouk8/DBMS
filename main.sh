@@ -15,7 +15,7 @@ do
 		        ./connectDB.sh
 			;;
 		"Drop DataBase" )
-                        ./dropDB.sh
+                        source ./dropDB.sh
 			;;
 		"Exit" ) 
 			echo -e "-------------------------------------"
