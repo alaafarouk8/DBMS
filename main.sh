@@ -12,7 +12,7 @@ do
 		    	ls DataBases
 			;;
 		"Connect To DataBases" )
-		       source ./connectDB.sh
+		        ./connectDB.sh
 			;;
 		"Drop DataBase" )
                         ./dropDB.sh

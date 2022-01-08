@@ -26,33 +26,32 @@ then
 	echo "You are connected to $name Successfully"
        	cd DataBases/$name
 	echo "Please Select one of these options"
-        select choice in CreateTable ListTables DropTable InsertIntoTable SelectFromTable DeleteFromTable UpdateTable Exit
+        select choice in "Create Table" "List Tables" "Drop Table" "Insert into Table" "Select From Table" "Delete From Table" "Update Table" "Exit"
  	do
         	case $choice in
-                	CreateTable )
+                	"Create Table" )
 				touch file
                         	;;
-                	ListTables )
+                	"List Tables" )
                        		ls
                         	;;
-                	DropTable )
+                	"Drop Table" )
 			        dropTable
 				;;
-                	InsertTntoTable )
+                	"Insert into Table" )
                         	;;
-                	SelectFromTable )
+                	"Select From Table" )
                         	;;
-                	DeleteFromTable )
+                	"Delete From Table" )
                         	;;
-                	UpdateTable )
+                	"Update Table" )
                         	;;
-			Exit )
+			"Exit" )
 				exit ;;
 
-                	*) echo Enter A valid Number
-				;;
-                	esac
-done
+                	*) echo "Enter A valid Number";;
+                esac
+	done
 
 else 
 	echo $name is not found
