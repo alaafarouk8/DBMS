@@ -1,21 +1,30 @@
 #!/bin/bash
-select choice in CreateDataBase ListDataBases ConnectToDataBases DropDataBase
+echo -e "-------------------------------------"
+echo    "-------- Welcome To Our DBMS---------"           
+echo -e "-------------------------------------"
+select choice in "Create DataBase" "List DataBases" "Connect To DataBases" "Drop DataBase" "Exit"
 do 
 	case $choice in
-		CreateDataBase )
+		"Create DataBase" )
 		 	./createDB.sh
 			;;
-		ListDataBases )
+		"List DataBases" )
 		    	ls DataBases
 			;;
-		ConnectToDataBases )
-			./connectDB.sh
+		"Connect To DataBases" )
+		       source ./connectDB.sh
 			;;
-		DropDataBase )
+		"Drop DataBase" )
                         ./dropDB.sh
 			;;
-		* ) 
-			exit
+		"Exit" ) 
+			echo -e "-------------------------------------"
+			echo    "-------------Thank You---------------"           
+			echo -e "-------------------------------------"
+		        exit
+			;;
+		*) 
+			echo "Enter Valid Number" 
 			;;
 	esac
 done
