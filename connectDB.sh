@@ -37,6 +37,14 @@ else
 		echo $tableName Created Successfully
 		echo "Please, Enter The Number of Columns"
 		read NumberCol
+		echo "Please Enter Primary Key"
+		read PK
+		while [[ $PK != PK ]]
+		do
+			echo "Please,just write PK"
+			read PK
+		done
+                echo -n $PK >> $tableName
 		for (( i = 1 ; i <= NumberCol ; i++ ));
 		do 
 			echo "Enter Name of the Column $i"
@@ -54,11 +62,14 @@ else
 				echo "Wrong DataType, Please Enter Int Or String"
 				read ColDataType
 			done
+			
 			if [[ i -eq NumberCol ]] ; then
-	      			echo -n	$ColName":">> $tableName 
-	        		echo -n $ColDataType>> $tableName
- 		        else 
-				echo -n $ColName":" >> $tableName
+	      			echo -n	$ColName >> $tableName
+			        echo -n $ColDataType>> $tableName
+ 		        
+			
+			else 
+				echo -n $ColName >> $tableName
 				echo -n $ColDataType":" >> $tableName
 			fi
 		done
