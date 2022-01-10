@@ -7,6 +7,8 @@ dropTable() {
 	read name
 	if [[ -f $name ]] ; then
         	rm $name
+		rm $name.type
+		rm $name.meta
         	echo $name Deleted Successfully
 	else
         	echo $name not found
@@ -38,13 +40,12 @@ else
 		echo "Please, Enter The Number of Columns"
 		read NumberCol
 		echo "Please Enter Primary Key"
-		read PK
 		while [[ $PK != PK ]]
 		do
 			echo "Please,just write PK"
 			read PK
 		done
-                echo -n $PK >> $tableName.Pk
+		echo -n $PK >> $tableName.meta
 		for (( i = 1 ; i <= NumberCol ; i++ ));
 		do 
 			echo "Enter Name of the Column $i"
@@ -72,7 +73,11 @@ else
 				echo -n $ColName":" >> $tableName
 				echo -n $ColDataType":" >> $tableName.type
 			fi
-		done
+                   done
+		   echo "---------------------------------------------------"
+                        echo "------------Table has been created-----------------"
+                        echo "---------------------------------------------------"
+
 	fi
 fi
 }
@@ -81,67 +86,71 @@ Insert() {
 echo "----------------Insert Into Table---------------"
 echo "------------------------------------------------"
 
-echo "Enter Table Name : "
-read tblname
-if [[ -f $tblname ]]; then
- 	typeset -i fieldcount=`awk -F: '{if(NR==1){print NF}}' $tblname;`
-	for (( n=1 ; n <= fieldcount ; n++ ));
+echo "Please , Enter Table Name You wanna insert to: "
+read tbName
+if [[ -f $tbName ]]; then
+ 	typeset -i cntColumns=`awk -F: '{print NF}' $tbName | head -1` ; #get number of columns in table
+	for (( i=1 ; i <= cntColumns ; i++ ));
 	do
-		colname=`awk -v"n=$n" 'BEGIN{FS=":"}{if(NR==1){print $n}}' $tblname;`
-		coltype=`awk -v"n=$n" 'BEGIN{FS=":"}{if(NR==1){print $n}}' $tblname.type;`
-	
+		colname=`awk -v"n=$i" 'BEGIN{FS=":"}{print $n}' $tbName | head -1` ;
+		coltype=`awk -v"n=$i" 'BEGIN{FS=":"}{print $n}' $tbName.type | head -1` ; 
 		 flag=0;
 		 while [[ $flag -eq 0 ]]; do
-		 	echo "Enter A $colname : "
+		 	echo "Enter Value for $colname Column: "
 		 	read value
 			if [[ $coltype = "int" && "$value" = +([0-9]) || $coltype = "string" && "$value" = +([a-zA-Z]) ]]; then
-			 		if [[ $n == $fieldcount ]]; then
-			 			echo $value >> $tblname;
+			 		if [[ $i == $cntColumns ]]; then
+			 			echo $value >> $tbName;
 			 		else
-			 			echo -n  $value":" >> $tblname;
+			 			echo -n  $value":" >> $tbName;
 			 		fi
 			 	flag=1;
 			 fi
 		 done
 	done
-		echo "data inserted successfully"
-		echo "================================================"
-		 	
 	else	
-		echo "Sorry $tblname Doesn't Exist";
-		echo "================================================"
+		echo "Sorry $tbName Doesn't Exist";
+		echo "-------------------------------------------------"
 			
-fi 
+fi  
+}
+update() {
+echo "----------------Insert Into Table---------------"
+echo "------------------------------------------------"
+echo "Please, Enter Table Name you wanna update"
+read tbName 
+if [[ -f $tbName ]] ; then 
+       echo "---------------------------------------------------------------------"
+       echo "-----------------------------$tbName---------------------------------"
+       echo "----------------------------------------------------------------------"
+       typeset -i cntColumns=`awk -F: '{print NF}' $tbName | head -1` ; #get number of columns in table
+       echo "---------------------------------------------------------------------"
+       echo "-------------Table Coloums Names And Their Data Types----------------"
+       PK=`awk  '{print $1}' $tbName.meta | head -1` ;
+       echo -n $PK "-"
+       for (( i = 1 ; i<=cntColumns ; i++ ))
+       do 
+	       colname=`awk -v"n=$i" 'BEGIN{FS=":"}{print $n}' $tbName | head -1` ;
+               coltype=`awk -v"n=$i" 'BEGIN{FS=":"}{print $n}' $tbName.type | head -1` ;
+	       if [[ $i == $cntColumns ]] ; then
+	            echo   $colname "-" $coltype 
+	       else 
+		   echo -n $colname "-" $coltype "||"
+	       fi
+       done
 
-
-
-
- 
+else 
+	echo $tbName not found 
+fi
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
+selectfunction()
+{
+	echo "select function"
+}
+delete() {
+echo "delete function"
+}
 echo -e "-----------------------------------------------"
 echo    "---------------Connect To DataBase-------------"
 echo -e "-----------------------------------------------"
@@ -171,10 +180,13 @@ then
                         	Insert
 				;;
                 	"Select From Table" )
-                        	;;
+                        	selectfunction
+				;;
                 	"Delete From Table" )
-                        	;;
+                        	delete
+				;;
                 	"Update Table" )
+				update
                         	;;
 			"Exit" )
 				exit ;;
