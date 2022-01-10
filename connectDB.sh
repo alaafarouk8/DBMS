@@ -40,7 +40,8 @@ else
 		echo "Please, Enter The Number of Columns"
 		read NumberCol
 		echo "Please Enter Primary Key"
-		while [[ $PK != PK ]]
+		read PK
+		while [[ $PK != "PK" ]]
 		do
 			echo "Please,just write PK"
 			read PK
@@ -115,7 +116,7 @@ if [[ -f $tbName ]]; then
 fi  
 }
 update() {
-echo "----------------Insert Into Table---------------"
+echo "----------------Update From Table---------------"
 echo "------------------------------------------------"
 echo "Please, Enter Table Name you wanna update"
 read tbName 
@@ -138,12 +139,55 @@ if [[ -f $tbName ]] ; then
 		   echo -n $colname "-" $coltype "||"
 	       fi
        done
+       echo "Enter Column Number you wanna update in"
+       read colNum 
+       while [[ $colNum -gt $cntColumns || $colNum -lt 1 && colNum != +([0-9]) ]] ; 
+       do
+	      echo " Valid Number. Please , Enter Column Number Correctly"
+	      read colNum 
+       done 
+       echo "Please the Old Value you wanna update" 
+       read oldValue 
 
+       if grep "${oldValue}" $tbName
+       then	 
+	       if [[ $oldValue =~ ^[0-9]+$ ]];
+		then
+              		oldValueDt="int"
+       		 else
+              		oldValueDt="string"
+       		 fi
+	       flag=0
+	       while [[ $flag -eq 0 ]]; do
+                        echo "Enter The New Value of $oldValue: "
+                        read newValue
+                         if [[ $newValue =~ ^[0-9]+$ ]];
+			 then
+              			newValueDt="int"
+       			 else
+              			newValueDt="string"
+		         fi
+			 if [[ $newValueDt != $oldValueDt ]] ;
+			 then
+				 echo "incorrect data type"
+		         else
+                                if [[ $oldValue != "" && $newValue != "" ]]; then
+				sed -i "s/$oldValue/$newValue/" $tbName
+				fi
+				 #gawk -v oldval=$oldValue -v newval=$newValue -v colnum=$colNum -i inplace '{ gsub(oldval, newval, $colnum) }; { print }' $tbName ;
+				 echo $tbName "Updated Successfully"
+		                 flag=1
+		         fi
+
+               done
+        else
+		echo $oldValue not found
+	fi
 else 
 	echo $tbName not found 
 fi
-}
 
+}
 selectfunction()
 {
 	echo "select function"
@@ -179,11 +223,11 @@ then
                 	"Insert into Table" )
                         	Insert
 				;;
-                	"Select From Table" )
-                        	selectfunction
+			"Select From Table" )
+				selectfunction
 				;;
-                	"Delete From Table" )
-                        	delete
+			"Delete From Table" )
+				delete
 				;;
                 	"Update Table" )
 				update
