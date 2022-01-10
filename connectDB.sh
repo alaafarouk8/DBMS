@@ -44,7 +44,7 @@ else
 			echo "Please,just write PK"
 			read PK
 		done
-                echo -n $PK >> $tableName
+                echo -n $PK >> $tableName.Pk
 		for (( i = 1 ; i <= NumberCol ; i++ ));
 		do 
 			echo "Enter Name of the Column $i"
@@ -64,18 +64,81 @@ else
 			done
 			
 			if [[ i -eq NumberCol ]] ; then
-	      			echo -n	$ColName >> $tableName
-			        echo -n $ColDataType>> $tableName
+	      			echo 	$ColName >> $tableName
+			        echo    $ColDataType>> $tableName.type
  		        
 			
 			else 
-				echo -n $ColName >> $tableName
-				echo -n $ColDataType":" >> $tableName
+				echo -n $ColName":" >> $tableName
+				echo -n $ColDataType":" >> $tableName.type
 			fi
 		done
 	fi
 fi
 }
+
+Insert() {
+echo "----------------Insert Into Table---------------"
+echo "------------------------------------------------"
+
+echo "Enter Table Name : "
+read tblname
+if [[ -f $tblname ]]; then
+ 	typeset -i fieldcount=`awk -F: '{if(NR==1){print NF}}' $tblname;`
+	for (( n=1 ; n <= fieldcount ; n++ ));
+	do
+		colname=`awk -v"n=$n" 'BEGIN{FS=":"}{if(NR==1){print $n}}' $tblname;`
+		coltype=`awk -v"n=$n" 'BEGIN{FS=":"}{if(NR==1){print $n}}' $tblname.type;`
+	
+		 flag=0;
+		 while [[ $flag -eq 0 ]]; do
+		 	echo "Enter A $colname : "
+		 	read value
+			if [[ $coltype = "int" && "$value" = +([0-9]) || $coltype = "string" && "$value" = +([a-zA-Z]) ]]; then
+			 		if [[ $n == $fieldcount ]]; then
+			 			echo $value >> $tblname;
+			 		else
+			 			echo -n  $value":" >> $tblname;
+			 		fi
+			 	flag=1;
+			 fi
+		 done
+	done
+		echo "data inserted successfully"
+		echo "================================================"
+		 	
+	else	
+		echo "Sorry $tblname Doesn't Exist";
+		echo "================================================"
+			
+fi 
+
+
+
+
+ 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
 
 
 
@@ -105,7 +168,8 @@ then
 			        dropTable
 				;;
                 	"Insert into Table" )
-                        	;;
+                        	Insert
+				;;
                 	"Select From Table" )
                         	;;
                 	"Delete From Table" )
