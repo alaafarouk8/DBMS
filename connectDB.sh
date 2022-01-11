@@ -190,7 +190,66 @@ fi
 }
 selectfunction()
 {
-	echo "select function"
+   	echo "----------------Select From Table---------------"
+	echo "------------------------------------------------"
+	echo "Please, Enter Table Name you wanna select from"
+	read tbName
+	if [[ -f $tbName ]] ; then
+
+        echo "Please , Select one of these Options" 
+        select choice in "Select Record" "Select AllRecords" "Select Column" "Back" "Exit"
+        do
+                case $choice in
+                        "Select Record" )
+				
+                               echo "Enter a Search Value to Select Record"
+			       read value
+			       echo "----------------------------------------------------------------------------"
+			       awk -F':' "/$value/" $tbName | cat
+                               echo "----------------------------------------------------------------------------"
+                                ;;
+                        "Select AllRecords" )
+                                echo "---------------------------------------"
+                                echo "-----------Select All Records-----------"
+                                echo "---------------------------------------"
+                                echo  $tbName "Records"
+                                echo "---------------------------------------------------------------------------"
+                                column -t -s ':'   $tbName
+                                echo "---------------------------------------------------------------------------"
+                                ;;
+			"Select Column" )
+			       echo "Enter Column Number you wanna select"
+                               read value
+                               while ! [[ $value =~ ^[1-9]+$ ]]
+       					do
+               				echo "Enter int"
+               				read value
+			       done
+			       cut -d':' -f$value $tbName
+
+                               echo "----------------------------------------------------------------------------"
+                               echo "----------------------------------------------------------------------------"
+
+
+			   ;;
+                        "Back" )
+                              ./connectDB.sh
+                                ;;
+                        "Exit" )
+                                exit ;;
+
+                        *) echo "Enter A valid Number";;
+                esac
+        done
+
+else
+       echo $tbName Doesnt Exits ;
+       echo "-----------------------------------------------"       
+fi
+
+
+
+
 }
 deleteRecord() {
 
