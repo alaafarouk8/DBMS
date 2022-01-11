@@ -192,8 +192,92 @@ selectfunction()
 {
 	echo "select function"
 }
+deleteRecord() {
+
+       echo "---------------------------------------"
+       echo "-----------Delete Record--------------"
+       echo "Please, Enter the record you wanna delete"
+       read rowNum 
+       while ! [[ $rowNum =~ ^[2-9]+$ ]]
+       do
+	       echo "Enter int"
+	       read rowNum
+       done
+       cntLines=$(cat $tbName | wc -l ) #counter number of lines in file
+       echo  $tbName "Befero Delete"
+       echo "---------------------------------------------------------------------------"
+
+       column -t -s ':'   $tbName
+       echo "---------------------------------------------------------------------------"
+
+        if test $cntLines -gt 0
+                then
+                    if test $rowNum -gt $cntLines
+                        then
+                            echo "this Record is out of boundary"
+                    else
+                        sed -i "${rowNum}d" $tbName
+                        echo "Record deleted successfuly"
+			 echo  $tbName "After Delete"
+       		       echo "---------------------------------------------------------------------------"
+
+       		       column -t -s ':'   $tbName
+		       echo "---------------------------------------------------------------------------"
+
+                    fi
+
+       else
+                    echo Sorry $tbName is Empty
+		    echo "------------------------------------"
+	fi
+}
 delete() {
-echo "delete function"
+echo "----------------Delete From Table---------------"
+echo "------------------------------------------------"
+echo "Please, Enter Table Name you wanna Delete from:"
+read tbName
+if [[ -f $tbName ]] ; then
+
+	echo "Please , Select one of these Options" 
+	select choice in "Delete Record" "Delete AllRecords" "Back" "Exit"
+        do
+                case $choice in
+                        "Delete Record" )
+                                deleteRecord
+                                ;;
+                        "Delete AllRecords" )
+                                echo "---------------------------------------"
+       				echo "-----------Delete All Record-----------"
+       				echo "---------------------------------------"
+			        echo  $tbName "Befero Delete"
+				echo "---------------------------------------------------------------------------"
+
+				column -t -s ':'   $tbName  
+		                echo "---------------------------------------------------------------------------"
+		                sed -i '2,$ d' $tbName
+                         	echo "Records deleted successfully!"
+		                echo "$tbName After Delete"
+				echo "---------------------------------------------------------------------------"
+				column -t -s ':' $tbName 
+                                echo "---------------------------------------------------------------------------"
+
+
+                                ;;
+                        "Back" )
+                              ./connectDB.sh
+                                ;;
+                        "Exit" )
+                                exit ;;
+
+                        *) echo "Enter A valid Number";;
+                esac
+        done
+
+else
+       echo $tbName Doesnt Exits ;
+       echo "-----------------------------------------------"       
+fi
+
 }
 echo -e "-----------------------------------------------"
 echo    "---------------Connect To DataBase-------------"
@@ -240,6 +324,7 @@ then
 	done
 
 else 
-	echo $name is not found
+	echo Sorry $name Doesnt Exits
+	echo "-----------------------------------------"
 fi 
 
