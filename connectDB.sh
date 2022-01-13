@@ -100,16 +100,29 @@ if [[ -f $tbName ]]; then
 		 	echo "Enter Value for $colname Column: "
 		 	read value
 			if [[ $coltype = "int" && "$value" = +([0-9]) || $coltype = "string" && "$value" = +([a-zA-Z]) ]]; then
-			 		if [[ $i == $cntColumns ]]; then
+			 		
+				 	if [[ $i == 1 ]] ; then
+                                                if  grep -Fxq "$value" $tbName ;then 
+                                                      echo "Please Enter Another Value,Because it a PK and its Unique :" 
+                                                      read value
+						else 
+							echo $value":" >> $tbName ;
+						 
+					        fi
+                                        else
+                                
+						if [[ $i == $cntColumns ]]; then
 			 			echo $value >> $tbName;
-			 		else
-			 			echo -n  $value":" >> $tbName;
-			 		fi
-			 	flag=1;
-			 fi
+			 			else
+			 			echo  $value":" >> $tbName;
+			 		        fi
+			 	         
+			                 fi
+			                 flag=1
+		  fi
 		 done
 	done
-	else	
+else	
 		echo "Sorry $tbName Doesn't Exist";
 		echo "-------------------------------------------------"
 			
@@ -134,7 +147,7 @@ if [[ -f $tbName ]] ; then
 	       colname=`awk -v"n=$i" 'BEGIN{FS=":"}{print $n}' $tbName | head -1` ;
                coltype=`awk -v"n=$i" 'BEGIN{FS=":"}{print $n}' $tbName.type | head -1` ;
 	       if [[ $i == $cntColumns ]] ; then
-	            echo   $colname "-" $coltype 
+	           echo   $colname "-" $coltype 
 	       else 
 		   echo -n $colname "-" $coltype "||"
 	       fi
@@ -184,7 +197,8 @@ if [[ -f $tbName ]] ; then
 		echo $oldValue not found
 	fi
 else 
-	echo $tbName not found 
+	echo Sorry, $tbName Not Found 
+	echo "-----------------------------------------------------"
 fi
 
 }
@@ -195,17 +209,19 @@ selectfunction()
 	echo "Please, Enter Table Name you wanna select from"
 	read tbName
 	if [[ -f $tbName ]] ; then
-
         echo "Please , Select one of these Options" 
-        select choice in "Select Record" "Select AllRecords" "Select Column" "Back" "Exit"
+        select choice in "Select Record" "Select AllRecords" "Select Column" "Exit"
         do
                 case $choice in
                         "Select Record" )
-				
                                echo "Enter a Search Value to Select Record"
 			       read value
 			       echo "----------------------------------------------------------------------------"
-			       awk -F':' "/$value/" $tbName | cat
+			        # command column ---->  used to display the contents of a file in columns 
+                                # -t -----> Applied for creating a table by determining the number of columns.
+                                # -s -----> Defines the column delimiter for output.
+                               column -t -s ':'   $tbName.type
+			       awk -F'[:]' "/$value/" $tbName | cut -d':'
                                echo "----------------------------------------------------------------------------"
                                 ;;
                         "Select AllRecords" )
@@ -214,7 +230,8 @@ selectfunction()
                                 echo "---------------------------------------"
                                 echo  $tbName "Records"
                                 echo "---------------------------------------------------------------------------"
-                                column -t -s ':'   $tbName
+                                column -t -s ':'   $tbName.type
+				column -t -s ':'   $tbName
                                 echo "---------------------------------------------------------------------------"
                                 ;;
 			"Select Column" )
@@ -222,19 +239,17 @@ selectfunction()
                                read value
                                while ! [[ $value =~ ^[1-9]+$ ]]
        					do
-               				echo "Enter int"
+               				echo "Field Number Should Be Integer:"
                				read value
 			       done
+			       # -d option is used then it considered : as a field separator.
+			       cut -d':' -f$value $tbName.type
 			       cut -d':' -f$value $tbName
-
                                echo "----------------------------------------------------------------------------"
                                echo "----------------------------------------------------------------------------"
 
 
 			   ;;
-                        "Back" )
-                              ./connectDB.sh
-                                ;;
                         "Exit" )
                                 exit ;;
 
@@ -259,27 +274,29 @@ deleteRecord() {
        read rowNum 
        while ! [[ $rowNum =~ ^[2-9]+$ ]]
        do
-	       echo "Enter int"
+	       echo "Record Number Should Be Integer,Please Enter Again"
 	       read rowNum
        done
        cntLines=$(cat $tbName | wc -l ) #counter number of lines in file
        echo  $tbName "Befero Delete"
        echo "---------------------------------------------------------------------------"
-
+        # command column ---->  used to display the contents of a file in columns 
+        # -t -----> Applied for creating a table by determining the number of columns.
+        # -s -----> Defines the column delimiter for output.
+       column -t -s ':'   $tbName.type
        column -t -s ':'   $tbName
        echo "---------------------------------------------------------------------------"
-
         if test $cntLines -gt 0
                 then
                     if test $rowNum -gt $cntLines
                         then
                             echo "this Record is out of boundary"
                     else
-                        sed -i "${rowNum}d" $tbName
-                        echo "Record deleted successfuly"
-			 echo  $tbName "After Delete"
+                       sed -i "${rowNum}d" $tbName
+                       echo "Record deleted successfuly"
+		       echo  $tbName "After Delete"
        		       echo "---------------------------------------------------------------------------"
-
+                       column -t -s ':'   $tbName.type
        		       column -t -s ':'   $tbName
 		       echo "---------------------------------------------------------------------------"
 
@@ -298,7 +315,7 @@ read tbName
 if [[ -f $tbName ]] ; then
 
 	echo "Please , Select one of these Options" 
-	select choice in "Delete Record" "Delete AllRecords" "Back" "Exit"
+	select choice in "Delete Record" "Delete AllRecords" "Exit"
         do
                 case $choice in
                         "Delete Record" )
@@ -310,20 +327,20 @@ if [[ -f $tbName ]] ; then
        				echo "---------------------------------------"
 			        echo  $tbName "Befero Delete"
 				echo "---------------------------------------------------------------------------"
-
+                                # command column ---->  used to display the contents of a file in columns 
+				# -t -----> Applied for creating a table by determining the number of columns.
+				# -s -----> Defines the column delimiter for output.
+				column -t -s ':'   $tbName.type
 				column -t -s ':'   $tbName  
 		                echo "---------------------------------------------------------------------------"
-		                sed -i '2,$ d' $tbName
+		                # delete from 2nd line to the last line 
+				sed -i '2,$ d' $tbName
                          	echo "Records deleted successfully!"
 		                echo "$tbName After Delete"
 				echo "---------------------------------------------------------------------------"
+				column -t -s ':'   $tbName.type
 				column -t -s ':' $tbName 
                                 echo "---------------------------------------------------------------------------"
-
-
-                                ;;
-                        "Back" )
-                              ./connectDB.sh
                                 ;;
                         "Exit" )
                                 exit ;;
@@ -374,7 +391,7 @@ then
 				;;
                 	"Update Table" )
 				update
-                        	;;
+				;;
 			"Exit" )
 				exit ;;
 
@@ -383,7 +400,7 @@ then
 	done
 
 else 
-	echo Sorry $name Doesnt Exits
+	echo Sorry , $name Doesnt Exits
 	echo "-----------------------------------------"
 fi 
 
