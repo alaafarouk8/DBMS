@@ -66,8 +66,6 @@ function dropDB() {
 	echo    "------------------------------------------------------------------------"
 	echo    "------------------------Delete DataBase---------------------------------"
 	echo    "------------------------------------------------------------------------"
-   if [ "$(ls -A DataBases)" ];
-	then
 	echo "Please , Enter the name of the data base you wanna delete"
 	read name
 	if [[ -z $name ]] ; then 
@@ -75,8 +73,7 @@ function dropDB() {
 		echo "Empty String"
 		tput setaf 7
 		dropDB
-	fi
-	if [[ -d DataBases/$name ]];
+	elif [[ -d DataBases/$name ]];
 	then
         	rm -R DataBases/$name
 		tput setaf 2
@@ -89,21 +86,13 @@ function dropDB() {
         	echo $name "Is not Found"
 		dropDB
                 echo  "------------------------------------------------------------------------"
-
 		tput setaf 7
-         fi
-     else 
-	     tput setaf 3
-	     echo "There are no Data bases to Delete"
-	     echo  "------------------------------------------------------------------------"
-
-	     tput setaf 7
-    fi  	     
+         fi  	     
 
 }
 #*************************************************************************************#
 #******************************function to create table*******************************#
-createTable() {
+function createTable() {
 tput setaf 6
 echo    "------------------------------------------------------------------------"
 echo    "--------------------------Create Table----------------------------------"
@@ -226,8 +215,7 @@ if [[ -z $tbName ]] ; then
         echo "Empty String"
         tput setaf 7
         dropTable
-fi
-if [[ -f $tbName ]];
+elif [[ -f $tbName ]];
 then
         rm $tbName
         rm $tbName.type
@@ -237,7 +225,7 @@ then
 	tput setaf 7
 else
 	tput setaf 1
-	echo $tbName " Table Is not Found"
+	echo $tbName " \Table Is not Found"
 	echo "------------------------------------------------------------------------"
 	tput setaf 7
 	dropTable
@@ -279,6 +267,7 @@ if [[ -f $tbName ]]; then
 		            fi	
                        done                                 
 	      fi
+	      flag=0
 	      while [[ $flag -eq 0 && $i -gt 1 ]]; do
 		        tput setaf 6 
 		 	echo "Enter Value for $colname Column: "
@@ -318,7 +307,6 @@ if [[ -f $tbName ]] ; then
         do
                 case $choice in
                         "Select Record" )
-
                                echo "Enter a Search Value to Select Record"
 			       read value
 			       if [[ -z $value ]] ; then
@@ -355,6 +343,7 @@ if [[ -f $tbName ]] ; then
                				read value
 			       done
 			       tput setaf 2
+			       cut -d':' -f$value $tbName.type
 			       cut -d':' -f$value $tbName
 			       echo "----------------------------------------------------------------------------"
                                echo "----------------------------------------------------------------------------"
@@ -496,7 +485,7 @@ done
        column -t -s ':'  $tbName.type
        column -t -s ':'   $tbName
        echo "-------------------------------------------------------------------------"
-        if test $cntLines -gt 0
+        if test $cntLines -gt 1
                 then
                     if test $rowNum -gt $cntLines
                         then
@@ -582,6 +571,12 @@ echo  "--------------------------Connect Data Base-----------------------------"
 echo  "------------------------------------------------------------------------"
 echo Enter The Name of the DataBase You Wanna Connect to 
 read name
+while [[ -z $name ]] ;
+do
+	tput setaf 1 
+	echo "Empty Input" ;
+	read name
+done
 tput setaf 7
 if [[ -d DataBases/$name ]] ;
 then
