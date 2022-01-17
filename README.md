@@ -1,7 +1,9 @@
 # Bash Shell Script Database Management System (DBMS)
 # The Project Features:
-The Application will be CLI Menu based app, that will provide to user this Menu items:
+The Application will be CLI Menu based app, that will provide to user this Menu items
+<br>
 Main Menu:
+<br>
 - Create Database
 - List Databases
 - Connect To Databases
