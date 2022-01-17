@@ -22,6 +22,6 @@ The Application will be CLI Menu based app, that will provide to user this Menu 
 - Update Table
 
 # Main Menu
-![](https://github.com/alaafarouk8/DBMS/blob/main/screenshoots/1.png?raw=true)
-![](https://github.com/alaafarouk8/DBMS/blob/main/screenshoots/2.png?raw=true)
+![](https://github.com/alaafarouk8/DBMS/blob/main/screenshots/1.png?raw=true)
+![](https://github.com/alaafarouk8/DBMS/blob/main/screenshots/2.png?raw=true)
 
