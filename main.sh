@@ -20,8 +20,8 @@ echo  "------------------------------------------------------------------------"
 echo  "-----------------------Create DataBase----------------------------------"
 echo  "------------------------------------------------------------------------"
 echo Please ,Enter the Name of the DateBase
-tput setaf 7
 read dbName
+tput setaf 7
 if [[ ! -d DataBases ]] ; then 
 	mkdir DataBases 
 fi
@@ -30,16 +30,16 @@ then    tput setaf 1
         echo "Empty String"
         tput setaf 7
         createDB
+elif [[ $dbName =~ ['!@#$%^&*()_+'] ]];
+then 
+	tput setaf 1 ;
+	echo "incorrect input"
+	tput setaf 6
+	createDB
 elif [[ $dbName == *" "* ]] ;
 then 
 	tput setaf 1
 	echo "Data Base Cant Contain Any Spaces"
-	tput setaf 7
-	createDB
-elif [[ $dbName != +([a-zA-Z]*[a-zA-Z0-9_]) ]];
-then
-	tput setaf 1
-        echo "Data Base Name Cant Contain Numbers or Special chars"
 	tput setaf 7
 	createDB
 elif [[ -d DataBases/$dbName ]]; then
@@ -104,15 +104,18 @@ then
 	tput setaf 1
 	echo "Empty Input"
 	createTable
+elif [[ $tableName =~ ['!@#$%^&*()_+'] ]];
+then
+        tput setaf 1 ;
+        echo "incorrect input"
+        tput setaf 6
+	createTable
+
 elif [[ $tableName == *" "* ]];
 then	
 	tput setaf 1
 	echo "Table Name Cant Contain Space"
 	createTable 
-elif [[  $tableName != +([a-zA-Z]*[a-zA-Z0-9_]) ]] ; then
-	tput setaf 1
-	echo "InCorrect Table Name"
-	createTable
 else 
 	if [[ -f $tableName ]] ;
 	then 
@@ -149,15 +152,15 @@ else
 			do
 				echo "Please, Column Name $i : "
 				read ColName
-				if [[  $ColName != +([a-zA-Z]*[a-zA-Z0-9_]) ]];
-				then
-					tput setaf 1
-					echo "InCorrect Column Name"
-				elif [[ $ColName == *" "* ]];
+				if [[ $ColName == *" "* ]];
 				then
 					tput setaf 1
 					echo "Column name cant contain any spaces"
-				
+				elif [[ $ColName =~ ['!@#$%^&*()_+'] ]]; then
+					tput setaf 1 ;
+					echo "incorrect input"
+			                tput setaf 6
+
 				elif [[ -z $ColName ]] ;
 				then
 					tput setaf 1 
@@ -586,26 +589,28 @@ then
         cd DataBases/$name
         tput setaf 6
         echo "Please Select one of these options"
-        select choice in "Create Table" "List Tables" "Drop Table" "Insert Into Table" "Select From Table" "Update Table" "Delete From Table"  "Exit"
+        select choice in "Create Table" "List Tables" "Drop Table" "Insert Into Table" "Select From Table" "Update Table" "Delete From Table"  "Back" "Exit"
         do
                 case $choice in
                         "Create Table" )
                                 createTable
                                 ;;
                         "List Tables" )
-                                if [ -z "$(ls -A )" ]; then
-                                	tput setaf 1
-                                	echo "--------------------------There are no Tables---------------------------"
-                                	tput setaf 7
-                                else
-                                	tput setaf 2
-					echo "------------------------------------------------------------------------"
-					echo "----------------------------------Our Tables----------------------------"
-                                	echo "------------------------------------------------------------------------"
-                                	ls 
-                                	tput setaf 7
+				        if [ -z "$(ls -A)" ]; then
+                                		tput setaf 1
+                                		echo    "--------------------------There are no Tables--------------------------"
+                                		tput setaf 7
+                                		cd ../..
+						connectDB
+                        		else
+                                		tput setaf 2
+                                		echo    "-----------------------------------------------------------------------"
+                                		echo    "-----------------------------Our Tables--------------------------------"
+                                		echo    "-----------------------------------------------------------------------"
+                                		ls 
+                                		tput setaf 7
 
-                        	fi
+                                        fi
                                 ;;
                         "Drop Table" )
                                 dropTable
@@ -622,6 +627,10 @@ then
 
 			"Delete From Table")
 				delete 
+				;;
+			"Back" )
+			        cd ../.. 
+				mainMenu
 				;;
                         "Exit" )
                                 exit ;;
